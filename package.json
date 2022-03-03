@@ -14,6 +14,7 @@
     "@distube/yt-dlp": "^1.0.2",
     "discord.js": "^13.6.0",
     "distube": "^3.3.2",
+    "dotenv": "^16.0.0",
     "ffmpeg-static": "^4.4.1",
     "libsodium-wrappers": "^0.7.9"
   }

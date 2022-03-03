@@ -1,7 +1,10 @@
 const Discord = require("discord.js");
 const DisTube = require("distube");
-const { prefix, token } = require("./config.json");
 const { YtDlpPlugin } = require("@distube/yt-dlp");
+require('dotenv').config();
+
+const prefix = process.env.PREFIX;
+const token = process.env.TOKEN;
 
 const client = new Discord.Client({
     intents: [
@@ -10,6 +13,7 @@ const client = new Discord.Client({
         "GUILD_VOICE_STATES",
     ],
 });
+
 const distube = new DisTube.default(client, {
     youtubeDL: false,
     plugins: [new YtDlpPlugin()],
