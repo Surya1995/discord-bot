@@ -17,9 +17,9 @@ const client = new Discord.Client({
 const distube = new DisTube.default(client, {
     youtubeDL: false,
     plugins: [new YtDlpPlugin()],
-    leaveOnEmpty: false,
+    leaveOnEmpty: true,
     leaveOnFinish: false,
-    leaveOnStop: false,
+    leaveOnStop: false
 });
 
 client.once("ready", () => {
@@ -79,8 +79,14 @@ function repeatLoop(message){
 function playSong(message) {
     const voiceChannel = message.member?.voice?.channel;
     var args = message.content.slice(prefix.length).trim().split(" ");
+    var mainArgs = args.join(" ");
+
+    if (validURL(args[1])) {
+        mainArgs = "play " + youtubeLinkToParam(args[1]);
+    }
+    
     if (voiceChannel) {
-        distube.play(voiceChannel, args.join(" "), {
+        distube.play(voiceChannel, mainArgs, {
             message,
             textChannel: message.channel,
             member: message.member,
@@ -140,7 +146,6 @@ function distubeEventListener(distube) {
             )
         )
         .on("error", (textChannel, e) => {
-            console.log("MC ye hai");
             console.error(e);
             textChannel.send(
                 `An error encountered: ${e.message.slice(0, 2000)}`
@@ -180,6 +185,25 @@ function distubeEventListener(distube) {
             message.channel.send("No result found!")
         )
         .on("searchDone", () => {});
+}
+
+function validURL(str) {
+    var pattern = new RegExp(
+        "^(https?:\\/\\/)?" + // protocol
+            "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" + // domain name
+            "((\\d{1,3}\\.){3}\\d{1,3}))" + // OR ip (v4) address
+            "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" + // port and path
+            "(\\?[;&a-z\\d%_.~+=-]*)?" + // query string
+            "(\\#[-a-z\\d_]*)?$",
+        "i"
+    );
+    return !!pattern.test(str);
+}
+
+function youtubeLinkToParam(urlText) {
+    var url_string = urlText;
+    var url = new URL(url_string);
+    return url.searchParams.get("v");
 }
 
 client.login(token);
