@@ -11,6 +11,7 @@ const client = new Discord.Client({
         "GUILDS",
         "GUILD_MESSAGES",
         "GUILD_VOICE_STATES",
+        "GUILD_MESSAGE_REACTIONS",
     ],
 });
 
@@ -48,7 +49,7 @@ function distubePlayingSongs(command, message) {
     }
     if (command === "resume") distube.resume(message);
     if (command === "pause") distube.pause(message);
-    if (command === "skip") distube.skip(message);
+    if (["next", "skip"].includes(command)) distube.skip(message);
 
     if (
         [
@@ -92,7 +93,12 @@ function playSong(message) {
             member: message.member,
         });
     } else {
-        message.channel.send("You must join a voice channel first.");
+        message.channel
+            .send("You must join a voice channel first.")
+            .then(function (message) {
+                message.react("😒");
+            })
+            .catch(function () {});
     }
 }
 
@@ -159,6 +165,10 @@ function distubeEventListener(distube) {
                 "The voice channel is empty! Leaving the voice channel..."
             )
         )
+        .on("initQueue", queue => {
+            queue.autoplay = false;
+            queue.volume = 100;
+        })
         // DisTubeOptions.searchSongs > 1
         .on("searchResult", (message, result) => {
             let i = 0;
