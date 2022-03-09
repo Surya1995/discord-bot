@@ -132,12 +132,14 @@ function distubeEventListener(distube) {
         }\` | Autoplay: \`${queue.autoplay ? "On" : "Off"}\``;
     // DisTube event listeners, more in the documentation page
     distube
-        .on("playSong", (queue, song) =>
+        .on("playSong", (queue, song) => {
             queue.textChannel?.send(
                 `Playing \`${song.name}\` - \`${
                     song.formattedDuration
                 }\`\nRequested by: ${song.user}\n${status(queue)}`
-            )
+            );
+        }
+            
         )
         .on("addSong", (queue, song) =>
             queue.textChannel?.send(
